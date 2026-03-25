@@ -44,6 +44,8 @@ bun add <package>
 - **Linter/Formatter**: Biome (configured at root, runs on `apps/**`)
 - **Git hooks**: Husky + lint-staged (Biome on staged files)
 
+---
+
 ## tRPC — Type Flow Between Apps
 
 tRPC connects `apps/api` (server) to `apps/web-ui` (client) with end-to-end type safety.
@@ -59,6 +61,8 @@ When working on tRPC procedures, run these in separate terminals:
 cd apps/api && bun run dev             # API server
 cd apps/api && bun run generate:watch  # regenerate types on router changes
 ```
+
+---
 
 ## Commit Convention
 
@@ -76,12 +80,21 @@ Format: `<type>(<scope>): <description>`
 
 **Examples:**
 - `feat(web-ui): add event creation page`
-- `fix(api): prevent duplicate likes on same post`
+- `fix(api): prevent duplicate open events for same workflow`
 - `chore(api|web-ui): update build configuration`
-- `refactor(api): extract pagination helper`
-- `docs: add claude context and code review files`
+- `refactor(api): extract trigger evaluation into dedicated service`
+- `docs: update setup instructions`
 
 **Rules:**
 - Use lowercase for description
 - No period at the end
 - Use imperative mood ("add", not "added" or "adds")
+
+---
+
+## Business Rules (summary)
+- No duplicate OPEN events per workflow
+- Inactive workflows cannot be triggered
+- Trigger logic always goes through `TriggerService` — never in routers or frontend
+
+> Full rules in `apps/api/CLAUDE.md`
