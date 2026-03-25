@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Query, Router } from "nestjs-trpc";
+import { Input, Query, Router } from "nestjs-trpc";
 import { z } from "zod";
 
 @Injectable()
@@ -9,7 +9,7 @@ export class AppRouter {
 		input: z.object({ name: z.string().optional() }),
 		output: z.object({ greeting: z.string() }),
 	})
-	hello({ input }: { input: { name?: string } }) {
-		return { greeting: `Hello, ${input.name ?? "world"}!` };
+	hello(@Input() input: { name?: string }) {
+		return { greeting: `Hello, ${input?.name ?? "world"}!` };
 	}
 }

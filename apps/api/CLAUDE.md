@@ -38,7 +38,7 @@ All future shared concerns (DB, constants, types, utils) go under `src/shared/<c
 
 ```ts
 import { Injectable } from "@nestjs/common";
-import { Query, Router } from "nestjs-trpc";
+import { Input, Query, Router } from "nestjs-trpc";
 import { z } from "zod";
 
 @Injectable()
@@ -48,7 +48,7 @@ export class FeatureRouter {
     input: z.object({ ... }),
     output: z.object({ ... }),
   })
-  myProcedure({ input }: { input: ... }) {
+  myProcedure(@Input() input: { ... }) {
     return { ... };
   }
 }
