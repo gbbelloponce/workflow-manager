@@ -34,6 +34,18 @@
 			"tailwindDirectives": true
 		}
 	},
+	"overrides": [
+		{
+			"includes": ["apps/api/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useImportType": "off"
+					}
+				}
+			}
+		}
+	],
 	"assist": {
 		"enabled": true,
 		"actions": {
