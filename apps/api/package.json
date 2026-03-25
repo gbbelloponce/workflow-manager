@@ -5,12 +5,20 @@
 	"author": "",
 	"private": true,
 	"license": "UNLICENSED",
+	"exports": {
+		"./router": {
+			"types": "./src/@generated/server.ts",
+			"default": "./src/@generated/server.ts"
+		}
+	},
 	"scripts": {
 		"build": "nest build",
-		"start": "nest start",
-		"dev": "nest start --watch",
-		"start:debug": "nest start --debug --watch",
+		"dev": "bun --watch src/main.ts",
+		"start": "bun src/main.ts",
 		"start:prod": "node dist/main",
+		"generate": "nestjs-trpc generate",
+		"generate:watch": "nestjs-trpc watch",
+		"typecheck": "tsc --noEmit",
 		"test": "jest",
 		"test:watch": "jest --watch",
 		"test:cov": "jest --coverage",
@@ -21,8 +29,11 @@
 		"@nestjs/common": "^11.0.1",
 		"@nestjs/core": "^11.0.1",
 		"@nestjs/platform-express": "^11.0.1",
+		"@trpc/server": "^11.15.0",
+		"nestjs-trpc": "^2.9.1",
 		"reflect-metadata": "^0.2.2",
-		"rxjs": "^7.8.1"
+		"rxjs": "^7.8.1",
+		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@nestjs/cli": "^11.0.0",

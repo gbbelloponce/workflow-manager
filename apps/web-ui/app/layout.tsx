@@ -1,6 +1,7 @@
 import { Geist_Mono, Inter } from "next/font/google";
 
 import "./globals.css";
+import { TRPCQueryProvider } from "@/components/providers/trpc-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +29,9 @@ export default function RootLayout({
 			)}
 		>
 			<body>
-				<ThemeProvider>{children}</ThemeProvider>
+				<TRPCQueryProvider>
+					<ThemeProvider>{children}</ThemeProvider>
+				</TRPCQueryProvider>
 			</body>
 		</html>
 	);
