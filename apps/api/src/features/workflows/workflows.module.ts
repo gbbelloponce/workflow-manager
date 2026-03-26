@@ -4,5 +4,6 @@ import { WorkflowsService } from "./workflows.service";
 
 @Module({
 	providers: [WorkflowsService, WorkflowsRouter],
+	exports: [WorkflowsService],
 })
 export class WorkflowsModule {}
