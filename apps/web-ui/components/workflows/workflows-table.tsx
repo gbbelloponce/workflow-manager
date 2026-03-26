@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -14,6 +15,13 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
 import {
 	Table,
@@ -26,6 +34,7 @@ import {
 import { getTRPCErrorMessage } from "@/lib/trpc/error";
 import { useTRPC } from "@/lib/trpc/react";
 import { TriggerWorkflowDialog } from "./trigger-workflow-dialog";
+import { WorkflowViewDialog } from "./workflow-view-dialog";
 
 export function WorkflowsTable() {
 	const trpc = useTRPC();
@@ -34,6 +43,7 @@ export function WorkflowsTable() {
 	const [triggerWorkflowId, setTriggerWorkflowId] = useState<string | null>(
 		null,
 	);
+	const [viewWorkflowId, setViewWorkflowId] = useState<string | null>(null);
 
 	const { data: workflows, isLoading } = useQuery(
 		trpc.workflowsRouter.getAll.queryOptions(),
@@ -83,7 +93,7 @@ export function WorkflowsTable() {
 						<TableHead>Trigger</TableHead>
 						<TableHead>Recipients</TableHead>
 						<TableHead>Active</TableHead>
-						<TableHead className="text-right" />
+						<TableHead className="w-10" />
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -106,24 +116,35 @@ export function WorkflowsTable() {
 									}
 								/>
 							</TableCell>
-							<TableCell className="flex justify-end gap-2">
-								<Button
-									variant="secondary"
-									size="sm"
-									onClick={() => setTriggerWorkflowId(wf.id)}
-								>
-									Trigger manually
-								</Button>
-								<Button variant="outline" size="sm" asChild>
-									<Link href={`/workflows/${wf.id}`}>Edit</Link>
-								</Button>
-								<Button
-									variant="destructive"
-									size="sm"
-									onClick={() => setDeleteId(wf.id)}
-								>
-									Delete
-								</Button>
+							<TableCell>
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<Button variant="ghost" size="icon" className="h-8 w-8">
+											<MoreHorizontal className="h-4 w-4" />
+											<span className="sr-only">Open actions menu</span>
+										</Button>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent align="end">
+										<DropdownMenuItem onSelect={() => setViewWorkflowId(wf.id)}>
+											View
+										</DropdownMenuItem>
+										<DropdownMenuItem asChild>
+											<Link href={`/workflows/${wf.id}`}>Edit</Link>
+										</DropdownMenuItem>
+										<DropdownMenuItem
+											onSelect={() => setTriggerWorkflowId(wf.id)}
+										>
+											Trigger manually
+										</DropdownMenuItem>
+										<DropdownMenuSeparator />
+										<DropdownMenuItem
+											variant="destructive"
+											onSelect={() => setDeleteId(wf.id)}
+										>
+											Delete
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
 							</TableCell>
 						</TableRow>
 					))}
@@ -133,6 +154,11 @@ export function WorkflowsTable() {
 			<TriggerWorkflowDialog
 				workflowId={triggerWorkflowId}
 				onClose={() => setTriggerWorkflowId(null)}
+			/>
+
+			<WorkflowViewDialog
+				workflowId={viewWorkflowId}
+				onClose={() => setViewWorkflowId(null)}
 			/>
 
 			<Dialog
