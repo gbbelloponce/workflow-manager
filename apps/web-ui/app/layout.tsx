@@ -1,6 +1,7 @@
 import { Geist_Mono, Inter } from "next/font/google";
 
 import "./globals.css";
+import { Nav } from "@/components/nav";
 import { TRPCQueryProvider } from "@/components/providers/trpc-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -31,7 +32,10 @@ export default function RootLayout({
 		>
 			<body>
 				<TRPCQueryProvider>
-					<ThemeProvider>{children}</ThemeProvider>
+					<ThemeProvider>
+						<Nav />
+						{children}
+					</ThemeProvider>
 				</TRPCQueryProvider>
 				<Toaster richColors />
 			</body>
