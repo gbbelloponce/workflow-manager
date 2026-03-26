@@ -30,8 +30,8 @@ app/
       page.tsx            # create workflow form
     [id]/
       page.tsx            # workflow detail / edit
-  history/
-    page.tsx              # event history with filters and pagination
+  events/
+    page.tsx              # event list
   layout.tsx
 components/
   ui/                     # shadcn components — do not edit manually
@@ -161,9 +161,9 @@ const mutation = useMutation({
 
 ### Workflow list
 - Each row has: name, trigger type badge, active/inactive toggle, "Trigger manually" button
-- The trigger button calls `workflowsRouter.trigger` and invalidates the history query on success
+- The trigger button calls `workflowsRouter.trigger` and invalidates the events query on success
 
-### Event history
+### Events
 - Filterable by workflow (select dropdown) and status (`OPEN` / `RESOLVED`)
 - Paginated — show current page and total
 - OPEN events show a "Resolve" button that opens a modal
