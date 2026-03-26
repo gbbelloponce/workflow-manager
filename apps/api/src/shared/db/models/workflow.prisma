@@ -11,7 +11,7 @@ model Workflow {
   thresholdConfig ThresholdConfig?
   varianceConfig  VarianceConfig?
   recipients      Recipient[]
-  // TODO: events
+  events          Event[]
 
   @@map("workflow")
 }

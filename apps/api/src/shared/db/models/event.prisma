@@ -1,0 +1,14 @@
+model Event {
+  id              String      @id @default(cuid())
+  workflowId      String
+  workflow        Workflow    @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  status          EventStatus @default(OPEN)
+  actualValue     Float
+  resolvedAt      DateTime?
+  resolvedComment String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("event")
+}

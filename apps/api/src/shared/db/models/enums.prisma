@@ -15,3 +15,8 @@ enum NotificationChannel {
   IN_APP
   EMAIL
 }
+
+enum EventStatus {
+  OPEN
+  RESOLVED
+}
