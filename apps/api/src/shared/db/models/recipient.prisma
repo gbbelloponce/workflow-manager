@@ -1,0 +1,10 @@
+model Recipient {
+  id      String              @id @default(cuid())
+  channel NotificationChannel
+  target  String
+
+  workflowId String
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@map("recipient")
+}

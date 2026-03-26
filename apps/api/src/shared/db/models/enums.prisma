@@ -1,0 +1,17 @@
+enum TriggerType {
+  THRESHOLD
+  VARIANCE
+}
+
+enum Operator {
+  GT // >
+  LT // <
+  GTE // >=
+  LTE // <=
+  EQ // =
+}
+
+enum NotificationChannel {
+  IN_APP
+  EMAIL
+}
