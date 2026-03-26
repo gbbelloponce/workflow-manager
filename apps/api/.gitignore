@@ -2,6 +2,8 @@
 /dist
 /node_modules
 /build
+/src/shared/db/generated/
+/src/@generated/
 
 # Logs
 logs

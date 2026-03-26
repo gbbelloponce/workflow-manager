@@ -1,0 +1,7 @@
+model Workflow {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  @@map("workflow")
+}
