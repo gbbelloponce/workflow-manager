@@ -25,11 +25,15 @@ import {
 } from "@/components/ui/table";
 import { getTRPCErrorMessage } from "@/lib/trpc/error";
 import { useTRPC } from "@/lib/trpc/react";
+import { TriggerWorkflowDialog } from "./trigger-workflow-dialog";
 
 export function WorkflowsTable() {
 	const trpc = useTRPC();
 	const queryClient = useQueryClient();
 	const [deleteId, setDeleteId] = useState<string | null>(null);
+	const [triggerWorkflowId, setTriggerWorkflowId] = useState<string | null>(
+		null,
+	);
 
 	const { data: workflows, isLoading } = useQuery(
 		trpc.workflowsRouter.getAll.queryOptions(),
@@ -79,7 +83,7 @@ export function WorkflowsTable() {
 						<TableHead>Trigger</TableHead>
 						<TableHead>Recipients</TableHead>
 						<TableHead>Active</TableHead>
-						<TableHead />
+						<TableHead className="text-right" />
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -103,6 +107,13 @@ export function WorkflowsTable() {
 								/>
 							</TableCell>
 							<TableCell className="flex justify-end gap-2">
+								<Button
+									variant="secondary"
+									size="sm"
+									onClick={() => setTriggerWorkflowId(wf.id)}
+								>
+									Trigger manually
+								</Button>
 								<Button variant="outline" size="sm" asChild>
 									<Link href={`/workflows/${wf.id}`}>Edit</Link>
 								</Button>
@@ -118,6 +129,11 @@ export function WorkflowsTable() {
 					))}
 				</TableBody>
 			</Table>
+
+			<TriggerWorkflowDialog
+				workflowId={triggerWorkflowId}
+				onClose={() => setTriggerWorkflowId(null)}
+			/>
 
 			<Dialog
 				open={deleteId !== null}
