@@ -43,7 +43,9 @@ lib/
   trpc/
     client.ts             # HTTP client factory — change API URL here
     react.ts              # useTRPC hook (client components only)
-    query-client.ts       # QueryClient factory
+    query-client.ts       # QueryClient factory + global mutation error handler
+    error.ts              # getTRPCErrorMessage() utility
+    types.ts              # RouterOutputs type — derive response types from AppRouter
 ```
 
 ---
@@ -101,6 +103,52 @@ Defaults to `http://localhost:8000/trpc`. Override with `NEXT_PUBLIC_API_URL` en
 - Never use `any`
 - Never ignore TypeScript errors with `@ts-ignore` or `@ts-expect-error` without a comment
 - Zod schemas from the API are the source of truth — don't redefine them in the frontend
+
+---
+
+## tRPC — Router Output Types
+
+To type component props with tRPC response shapes, use `RouterOutputs` from `@/lib/trpc/types`:
+
+```ts
+import type { RouterOutputs } from "@/lib/trpc/types";
+
+type WorkflowDetail = RouterOutputs["workflowsRouter"]["getById"];
+type WorkflowSummary = RouterOutputs["workflowsRouter"]["getAll"][number];
+```
+
+`@trpc/server` is listed as a devDependency solely for `inferRouterOutputs` — it has zero runtime footprint.
+
+**Pattern for forms that edit fetched data**: split into a loading wrapper + an inner component that only mounts when data is ready. Pass the loaded data as props so `useForm({ defaultValues })` is always pre-filled from the first render — avoids the uncontrolled→controlled input warning.
+
+```tsx
+export function EditFoo({ id }: { id: string }) {
+  const { data, isLoading } = useQuery(...);
+  if (isLoading) return <Skeleton />;
+  if (!data) return <NotFound />;
+  return <EditFooForm data={data} />; // mounts once, defaultValues always correct
+}
+```
+
+---
+
+## Error Handling
+
+Toast library: **sonner** (installed via shadcn). `<Toaster richColors />` is mounted in `app/layout.tsx`.
+
+Global mutation errors fire automatically as toasts via `QueryClient` `defaultOptions.mutations.onError` in `lib/trpc/query-client.ts` — no per-component boilerplate needed for generic errors.
+
+For per-mutation overrides (e.g. success messages or custom error text):
+
+```tsx
+const mutation = useMutation({
+  ...trpc.workflowsRouter.create.mutationOptions(),
+  onSuccess: () => toast.success("Workflow created."),
+  onError: (error) => toast.error(getTRPCErrorMessage(error)),
+});
+```
+
+`getTRPCErrorMessage(error)` lives in `@/lib/trpc/error.ts` — maps tRPC error codes (`NOT_FOUND`, `CONFLICT`, `FORBIDDEN`, `BAD_REQUEST`) to user-friendly strings and falls back to the server's raw message.
 
 ---
 

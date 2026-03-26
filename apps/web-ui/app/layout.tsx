@@ -3,6 +3,7 @@ import { Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { TRPCQueryProvider } from "@/components/providers/trpc-provider";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
@@ -32,6 +33,7 @@ export default function RootLayout({
 				<TRPCQueryProvider>
 					<ThemeProvider>{children}</ThemeProvider>
 				</TRPCQueryProvider>
+				<Toaster richColors />
 			</body>
 		</html>
 	);
