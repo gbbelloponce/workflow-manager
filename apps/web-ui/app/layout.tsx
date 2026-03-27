@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 
 import "./globals.css";
+
+export const metadata: Metadata = {
+	title: "Workflow Manager",
+	description:
+		"Define alert workflows, trigger them with a metric value, and track events and notifications.",
+};
+
 import { Nav } from "@/components/nav";
 import { TRPCQueryProvider } from "@/components/providers/trpc-provider";
 import { ThemeProvider } from "@/components/theme-provider";
