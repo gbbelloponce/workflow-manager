@@ -22,6 +22,14 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import {
 	Table,
@@ -32,6 +40,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { TablePagination } from "@/components/ui/table-pagination";
+import { useDebounce } from "@/lib/hooks/use-debounce";
 import { getTRPCErrorMessage } from "@/lib/trpc/error";
 import { useTRPC } from "@/lib/trpc/react";
 import { TriggerWorkflowDialog } from "./trigger-workflow-dialog";
@@ -45,10 +54,21 @@ export function WorkflowsTable() {
 		null,
 	);
 	const [viewWorkflowId, setViewWorkflowId] = useState<string | null>(null);
+	const [nameInput, setNameInput] = useState("");
+	const [isActiveFilter, setIsActiveFilter] = useState<
+		"all" | "true" | "false"
+	>("all");
 	const [page, setPage] = useState(1);
+	const debouncedName = useDebounce(nameInput);
 
 	const { data, isLoading } = useQuery(
-		trpc.workflowsRouter.getAll.queryOptions({ page, pageSize: 20 }),
+		trpc.workflowsRouter.getAll.queryOptions({
+			page,
+			pageSize: 20,
+			name: debouncedName || undefined,
+			isActive:
+				isActiveFilter === "all" ? undefined : isActiveFilter === "true",
+		}),
 	);
 	const workflows = data?.items ?? [];
 	const totalPages = data ? Math.ceil(data.total / data.pageSize) : 1;
@@ -76,20 +96,61 @@ export function WorkflowsTable() {
 		},
 	});
 
+	const filterBar = (
+		<div className="flex items-center gap-2 pb-4">
+			<Input
+				placeholder="Search by name…"
+				value={nameInput}
+				onChange={(e) => {
+					setNameInput(e.target.value);
+					setPage(1);
+				}}
+				className="h-8 w-48"
+			/>
+			<Select
+				value={isActiveFilter}
+				onValueChange={(v) => {
+					setIsActiveFilter(v as typeof isActiveFilter);
+					setPage(1);
+				}}
+			>
+				<SelectTrigger className="h-8 w-32">
+					<SelectValue />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectItem value="all">All</SelectItem>
+					<SelectItem value="true">Active</SelectItem>
+					<SelectItem value="false">Inactive</SelectItem>
+				</SelectContent>
+			</Select>
+		</div>
+	);
+
 	if (isLoading) {
-		return <p className="text-muted-foreground text-sm">Loading workflows…</p>;
+		return (
+			<>
+				{filterBar}
+				<p className="text-muted-foreground text-sm">Loading workflows…</p>
+			</>
+		);
 	}
 
-	if (!workflows?.length) {
+	if (!workflows.length) {
 		return (
-			<p className="text-muted-foreground text-sm">
-				No workflows yet. Create one to get started.
-			</p>
+			<>
+				{filterBar}
+				<p className="text-muted-foreground text-sm">
+					{nameInput || isActiveFilter !== "all"
+						? "No workflows match your filters."
+						: "No workflows yet. Create one to get started."}
+				</p>
+			</>
 		);
 	}
 
 	return (
 		<>
+			{filterBar}
 			<Table>
 				<TableHeader>
 					<TableRow>

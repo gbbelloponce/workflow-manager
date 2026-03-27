@@ -20,6 +20,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { TablePagination } from "@/components/ui/table-pagination";
+import { WorkflowCombobox } from "@/components/workflows/workflow-combobox";
 import { useTRPC } from "@/lib/trpc/react";
 import type { RouterOutputs } from "@/lib/trpc/types";
 import { NotificationViewDialog } from "./notification-view-dialog";
@@ -32,30 +33,56 @@ export function NotificationsTable() {
 	const [viewNotification, setViewNotification] = useState<Notification | null>(
 		null,
 	);
+	const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
 	const [page, setPage] = useState(1);
 
 	const { data, isLoading } = useQuery(
-		trpc.notificationsRouter.getAll.queryOptions({ page, pageSize: 20 }),
+		trpc.notificationsRouter.getAll.queryOptions({
+			page,
+			pageSize: 20,
+			workflowId,
+		}),
 	);
 	const notifications = data?.items ?? [];
 	const totalPages = data ? Math.ceil(data.total / data.pageSize) : 1;
 
+	const filterBar = (
+		<div className="flex items-center gap-2 pb-4">
+			<WorkflowCombobox
+				value={workflowId}
+				onChange={(id) => {
+					setWorkflowId(id);
+					setPage(1);
+				}}
+			/>
+		</div>
+	);
+
 	if (isLoading) {
 		return (
-			<p className="text-muted-foreground text-sm">Loading notifications…</p>
+			<>
+				{filterBar}
+				<p className="text-muted-foreground text-sm">Loading notifications…</p>
+			</>
 		);
 	}
 
 	if (!notifications.length) {
 		return (
-			<p className="text-muted-foreground text-sm">
-				No notifications yet. Trigger a workflow to get started.
-			</p>
+			<>
+				{filterBar}
+				<p className="text-muted-foreground text-sm">
+					{workflowId
+						? "No notifications match your filters."
+						: "No notifications yet. Trigger a workflow to get started."}
+				</p>
+			</>
 		);
 	}
 
 	return (
 		<>
+			{filterBar}
 			<Table>
 				<TableHeader>
 					<TableRow>

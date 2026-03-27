@@ -13,6 +13,13 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
 	Table,
 	TableBody,
 	TableCell,
@@ -21,6 +28,7 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { TablePagination } from "@/components/ui/table-pagination";
+import { WorkflowCombobox } from "@/components/workflows/workflow-combobox";
 import { useTRPC } from "@/lib/trpc/react";
 import type { RouterOutputs } from "@/lib/trpc/types";
 import { EventViewDialog } from "./event-view-dialog";
@@ -32,28 +40,76 @@ export function EventsTable() {
 	const trpc = useTRPC();
 	const [viewEvent, setViewEvent] = useState<Event | null>(null);
 	const [resolveEventId, setResolveEventId] = useState<string | null>(null);
+	const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
+	const [statusFilter, setStatusFilter] = useState<"all" | "OPEN" | "RESOLVED">(
+		"all",
+	);
 	const [page, setPage] = useState(1);
 
 	const { data, isLoading } = useQuery(
-		trpc.eventsRouter.getAll.queryOptions({ page, pageSize: 20 }),
+		trpc.eventsRouter.getAll.queryOptions({
+			page,
+			pageSize: 20,
+			workflowId,
+			status: statusFilter === "all" ? undefined : statusFilter,
+		}),
 	);
 	const events = data?.items ?? [];
 	const totalPages = data ? Math.ceil(data.total / data.pageSize) : 1;
 
+	const filterBar = (
+		<div className="flex items-center gap-2 pb-4">
+			<WorkflowCombobox
+				value={workflowId}
+				onChange={(id) => {
+					setWorkflowId(id);
+					setPage(1);
+				}}
+			/>
+			<Select
+				value={statusFilter}
+				onValueChange={(v) => {
+					setStatusFilter(v as typeof statusFilter);
+					setPage(1);
+				}}
+			>
+				<SelectTrigger className="h-8 w-32">
+					<SelectValue />
+				</SelectTrigger>
+				<SelectContent>
+					<SelectItem value="all">All</SelectItem>
+					<SelectItem value="OPEN">Open</SelectItem>
+					<SelectItem value="RESOLVED">Resolved</SelectItem>
+				</SelectContent>
+			</Select>
+		</div>
+	);
+
 	if (isLoading) {
-		return <p className="text-muted-foreground text-sm">Loading events…</p>;
+		return (
+			<>
+				{filterBar}
+				<p className="text-muted-foreground text-sm">Loading events…</p>
+			</>
+		);
 	}
 
 	if (!events.length) {
 		return (
-			<p className="text-muted-foreground text-sm">
-				No events yet. Trigger a workflow to get started.
-			</p>
+			<>
+				{filterBar}
+				<p className="text-muted-foreground text-sm">
+					{workflowId || statusFilter !== "all"
+						? "No events match your filters."
+						: "No events yet. Trigger a workflow to get started."}
+				</p>
+			</>
 		);
 	}
 
 	return (
 		<>
+			{filterBar}
 			<Table>
 				<TableHeader>
 					<TableRow>
