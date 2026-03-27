@@ -65,6 +65,12 @@ Esto inicia en paralelo la API (puerto 8000) y el frontend (puerto 3000).
 
 ---
 
+### Nota para el entrevistador
+
+La lógica de negocio principal está en `apps/api/src/features/trigger/trigger.service.ts`. Ahí es donde se verifica si el workflow está activo, se previenen eventos duplicados abiertos, se crean nuevos eventos y se encolan las notificaciones — todo en un solo lugar. El resto (routers, frontend) delega en este servicio.
+
+---
+
 ### Decisiones de arquitectura
 
 **Monorepo con Bun workspaces** — ambas apps viven en el mismo repositorio para que el contrato de tipos entre la API y el frontend (via tRPC) se pueda verificar a nivel de workspace sin necesidad de publicar paquetes.
