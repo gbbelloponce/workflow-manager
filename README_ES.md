@@ -43,6 +43,8 @@ cd apps/api && bun run db:migrate:dev
 **5. Poblar la base de datos** *(opcional pero recomendado)*
 
 ```bash
+bun run db:generate # Genera el cliente de Prisma
+
 bun run db:seed
 ```
 
