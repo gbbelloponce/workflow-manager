@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { TRPCError } from "@trpc/server";
+import { Prisma } from "../../shared/db/generated/prisma/client";
 import { PrismaService } from "../../shared/db/prisma.service";
 import type { GetAllEventsInput } from "./events.schemas";
 
@@ -8,9 +9,14 @@ export class EventsService {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async findAll(input: GetAllEventsInput) {
-		const { page, pageSize } = input;
+		const { page, pageSize, workflowId, status } = input;
+		const where: Prisma.EventWhereInput = {
+			...(workflowId && { workflowId }),
+			...(status && { status }),
+		};
 		const [items, total] = await this.prisma.$transaction([
 			this.prisma.event.findMany({
+				where,
 				include: {
 					workflow: { select: { id: true, name: true, triggerType: true } },
 				},
@@ -18,7 +24,7 @@ export class EventsService {
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 			}),
-			this.prisma.event.count(),
+			this.prisma.event.count({ where }),
 		]);
 		return { items, total, page, pageSize };
 	}

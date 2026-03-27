@@ -24,6 +24,11 @@ export const eventSchema = z.object({
 	}),
 });
 
+export const getAllEventsInputSchema = paginationInputSchema.extend({
+	workflowId: z.string().optional(),
+	status: z.enum(["OPEN", "RESOLVED"]).optional(),
+});
+
 export const paginatedEventsSchema = paginatedSchema(eventSchema);
 
-export type GetAllEventsInput = z.infer<typeof paginationInputSchema>;
+export type GetAllEventsInput = z.infer<typeof getAllEventsInputSchema>;

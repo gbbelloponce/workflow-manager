@@ -13,9 +13,14 @@ export class WorkflowsService {
 	constructor(private readonly prisma: PrismaService) {}
 
 	async findAll(input: GetAllWorkflowsInput) {
-		const { page, pageSize } = input;
+		const { page, pageSize, name, isActive } = input;
+		const where: Prisma.WorkflowWhereInput = {
+			...(name && { name: { contains: name, mode: "insensitive" } }),
+			...(isActive !== undefined && { isActive }),
+		};
 		const [items, total] = await this.prisma.$transaction([
 			this.prisma.workflow.findMany({
+				where,
 				select: {
 					id: true,
 					name: true,
@@ -28,9 +33,16 @@ export class WorkflowsService {
 				skip: (page - 1) * pageSize,
 				take: pageSize,
 			}),
-			this.prisma.workflow.count(),
+			this.prisma.workflow.count({ where }),
 		]);
 		return { items, total, page, pageSize };
+	}
+
+	findNames() {
+		return this.prisma.workflow.findMany({
+			select: { id: true, name: true },
+			orderBy: { name: "asc" },
+		});
 	}
 
 	async findById(id: string) {

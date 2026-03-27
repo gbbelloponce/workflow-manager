@@ -95,8 +95,18 @@ export const updateWorkflowSchema = z.object({
 		.optional(),
 });
 
+export const getAllWorkflowsInputSchema = paginationInputSchema.extend({
+	name: z.string().optional(),
+	isActive: z.boolean().optional(),
+});
+
+export const workflowNameSchema = z.object({
+	id: z.string(),
+	name: z.string(),
+});
+
 export const paginatedWorkflowsSchema = paginatedSchema(workflowSummarySchema);
 
 export type CreateWorkflowInput = z.infer<typeof createWorkflowSchema>;
 export type UpdateWorkflowInput = z.infer<typeof updateWorkflowSchema>;
-export type GetAllWorkflowsInput = z.infer<typeof paginationInputSchema>;
+export type GetAllWorkflowsInput = z.infer<typeof getAllWorkflowsInputSchema>;

@@ -21,6 +21,12 @@ export const notificationSchema = z.object({
 	}),
 });
 
+export const getAllNotificationsInputSchema = paginationInputSchema.extend({
+	workflowId: z.string().optional(),
+});
+
 export const paginatedNotificationsSchema = paginatedSchema(notificationSchema);
 
-export type GetAllNotificationsInput = z.infer<typeof paginationInputSchema>;
+export type GetAllNotificationsInput = z.infer<
+	typeof getAllNotificationsInputSchema
+>;
