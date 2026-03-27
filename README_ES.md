@@ -1,5 +1,7 @@
 # Workflow Manager
 
+> Este proyecto es una respuesta a un challenge de entrevista. Los requisitos base pedían un sistema de gestión de workflows y alertas; la funcionalidad extra que agregué es la posibilidad de dejar un comentario al resolver un evento.
+
 Un monorepo para definir workflows de alertas, dispararlos con un valor métrico y hacer seguimiento de los eventos y notificaciones resultantes.
 
 ---

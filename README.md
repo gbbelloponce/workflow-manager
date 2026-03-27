@@ -1,5 +1,7 @@
 # Workflow Manager
 
+> This project is a response to an interview challenge. The base requirements asked for a workflow/alert management system; the extra feature I added on top is the ability to leave a comment when resolving an event.
+
 A monorepo that lets you define alert workflows, trigger them with a metric value, and track the resulting events and notifications.
 
 ---
