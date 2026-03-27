@@ -158,8 +158,11 @@ Always use `TRPCError` with semantic codes:
 - Once resolved, the workflow can be triggered again
 
 ### Notifications
-- Notifications are sent **after** the event is created, never before
+- Notifications are saved to DB immediately after the event is created, never before
+- Status is either `QUEUED` or `DELIVERED`
+- All notifications are saved as `QUEUED` — actual delivery (email or in-app push) is not implemented
 - Use the interpolated message, not the raw template
-- `IN_APP`: store in DB
-- `EMAIL`: integrate Nodemailer or log to console (document which in README)
-- `NotificationService` must not contain trigger logic — it only sends
+- `NotificationService` only creates the DB record — no sending logic, no external calls
+- This is intentional: the schema and service are designed to support real delivery in the future
+  (e.g. a worker picks up `QUEUED` notifications and marks them `DELIVERED`)
+- Documented in README
