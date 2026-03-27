@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { TRPCError } from "@trpc/server";
 import type { Operator } from "../../shared/db/generated/prisma/client";
+import { Prisma } from "../../shared/db/generated/prisma/client";
 import { PrismaService } from "../../shared/db/prisma.service";
 import { NotificationsService } from "../notifications/notifications.service";
 import { WorkflowsService } from "../workflows/workflows.service";
@@ -67,17 +68,16 @@ export class TriggerService {
 	}
 
 	private conditionMet(workflow: WorkflowDetail, actualValue: number): boolean {
-		if (workflow.triggerType === "THRESHOLD") {
-			if (!workflow.thresholdConfig) return false;
-			return this.evaluateThreshold(workflow.thresholdConfig, actualValue);
+		switch (workflow.triggerType) {
+			case "THRESHOLD":
+				return workflow.thresholdConfig
+					? this.evaluateThreshold(workflow.thresholdConfig, actualValue)
+					: false;
+			case "VARIANCE":
+				return workflow.varianceConfig
+					? this.evaluateVariance(workflow.varianceConfig, actualValue)
+					: false;
 		}
-
-		if (workflow.triggerType === "VARIANCE") {
-			if (!workflow.varianceConfig) return false;
-			return this.evaluateVariance(workflow.varianceConfig, actualValue);
-		}
-
-		return false;
 	}
 
 	private evaluateThreshold(
@@ -117,9 +117,8 @@ export class TriggerService {
 			return event.id;
 		} catch (err) {
 			if (
-				err instanceof Error &&
-				"code" in err &&
-				(err as { code: string }).code === "P2002"
+				err instanceof Prisma.PrismaClientKnownRequestError &&
+				err.code === "P2002"
 			) {
 				// This may happen if two requests reach the API at the same time and both try to
 				// create the event for the same workflow
