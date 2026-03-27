@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getTRPCErrorMessage } from "@/lib/trpc/error";
 import { useTRPC } from "@/lib/trpc/react";
+import type { RouterOutputs } from "@/lib/trpc/types";
 
 interface TriggerWorkflowDialogProps {
 	workflowId: string | null;
@@ -137,12 +138,6 @@ export function TriggerWorkflowDialog({
 		</Dialog>
 	);
 }
-
-// ---------------------------------------------------------------------------
-// Config summary — shows the condition the user needs to beat
-// ---------------------------------------------------------------------------
-
-import type { RouterOutputs } from "@/lib/trpc/types";
 
 type WorkflowDetail = RouterOutputs["workflowsRouter"]["getById"];
 
