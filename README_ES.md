@@ -48,7 +48,7 @@ bun run db:generate # Genera el cliente de Prisma
 bun run db:seed
 ```
 
-Crea algunos workflows en distintos estados (activo/inactivo, threshold/variance), dos eventos (uno abierto, uno resuelto) y sus notificaciones asociadas para que la app tenga datos al abrir por primera vez.
+Crea 4 workflows en distintos estados (3 activos, 1 inactivo; tipos threshold y variance), 15 eventos distribuidos entre dos de esos workflows (1 abierto, 14 resueltos) y sus notificaciones asociadas — suficientes datos para navegar y paginar desde el primer arranque.
 
 **6. Iniciar los servidores de desarrollo**
 
