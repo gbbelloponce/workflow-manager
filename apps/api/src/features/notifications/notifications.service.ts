@@ -13,6 +13,19 @@ interface WorkflowForNotification {
 export class NotificationsService {
 	constructor(private readonly prisma: PrismaService) {}
 
+	async findAll() {
+		return this.prisma.notification.findMany({
+			orderBy: { createdAt: "desc" },
+			include: {
+				event: {
+					include: {
+						workflow: { select: { id: true, name: true } },
+					},
+				},
+			},
+		});
+	}
+
 	async notifyForEvent(
 		eventId: string,
 		workflow: WorkflowForNotification,

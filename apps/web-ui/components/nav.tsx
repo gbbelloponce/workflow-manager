@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 const links = [
 	{ href: "/workflows", label: "Workflows" },
 	{ href: "/events", label: "Events" },
+	{ href: "/notifications", label: "Notifications" },
 ];
 
 export function Nav() {
