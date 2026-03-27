@@ -32,3 +32,4 @@ export const getAllEventsInputSchema = paginationInputSchema.extend({
 export const paginatedEventsSchema = paginatedSchema(eventSchema);
 
 export type GetAllEventsInput = z.infer<typeof getAllEventsInputSchema>;
+export type ResolveEventInput = z.infer<typeof resolveEventSchema>;

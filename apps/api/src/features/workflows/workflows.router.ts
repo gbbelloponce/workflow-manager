@@ -1,7 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { Input, Mutation, Query, Router } from "nestjs-trpc";
 import { z } from "zod";
-import type { GetAllWorkflowsInput } from "./workflows.schemas";
+import type {
+	CreateWorkflowInput,
+	GetAllWorkflowsInput,
+	UpdateWorkflowInput,
+} from "./workflows.schemas";
 import {
 	createWorkflowSchema,
 	getAllWorkflowsInputSchema,
@@ -42,7 +46,7 @@ export class WorkflowsRouter {
 		input: createWorkflowSchema,
 		output: workflowDetailSchema,
 	})
-	create(@Input() input: z.infer<typeof createWorkflowSchema>) {
+	create(@Input() input: CreateWorkflowInput) {
 		return this.workflowsService.create(input);
 	}
 
@@ -50,7 +54,7 @@ export class WorkflowsRouter {
 		input: updateWorkflowSchema,
 		output: workflowDetailSchema,
 	})
-	update(@Input() input: z.infer<typeof updateWorkflowSchema>) {
+	update(@Input() input: UpdateWorkflowInput) {
 		return this.workflowsService.update(input);
 	}
 

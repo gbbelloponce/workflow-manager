@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Input, Mutation, Query, Router } from "nestjs-trpc";
-import type { GetAllEventsInput } from "./events.schemas";
+import type { GetAllEventsInput, ResolveEventInput } from "./events.schemas";
 import {
 	eventSchema,
 	getAllEventsInputSchema,
@@ -23,7 +23,7 @@ export class EventsRouter {
 		input: resolveEventSchema,
 		output: eventSchema,
 	})
-	resolve(@Input() input: { id: string; resolvedComment?: string }) {
+	resolve(@Input() input: ResolveEventInput) {
 		return this.eventsService.resolve(input.id, input.resolvedComment);
 	}
 }
