@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+export const resolveEventSchema = z.object({
+	id: z.string().min(1),
+	resolvedComment: z.string().optional(),
+});
+
 export const eventSchema = z.object({
 	id: z.string(),
 	status: z.enum(["OPEN", "RESOLVED"]),

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { Query, Router } from "nestjs-trpc";
+import { Input, Mutation, Query, Router } from "nestjs-trpc";
 import { z } from "zod";
-import { eventSchema } from "./events.schemas";
+import { eventSchema, resolveEventSchema } from "./events.schemas";
 import { EventsService } from "./events.service";
 
 @Injectable()
@@ -12,5 +12,13 @@ export class EventsRouter {
 	@Query({ output: z.array(eventSchema) })
 	getAll() {
 		return this.eventsService.findAll();
+	}
+
+	@Mutation({
+		input: resolveEventSchema,
+		output: eventSchema,
+	})
+	resolve(@Input() input: { id: string; resolvedComment?: string }) {
+		return this.eventsService.resolve(input.id, input.resolvedComment);
 	}
 }
