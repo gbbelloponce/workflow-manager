@@ -26,7 +26,11 @@
 		"test:e2e": "jest --config ./test/jest-e2e.json",
 		"db:generate": "bunx prisma generate",
 		"db:migrate:dev": "bunx prisma migrate dev",
+		"db:seed": "bun src/seed.ts",
 		"db:studio": "bunx prisma studio"
+	},
+	"prisma": {
+		"seed": "bun src/seed.ts"
 	},
 	"dependencies": {
 		"@nestjs/common": "^11.0.1",
