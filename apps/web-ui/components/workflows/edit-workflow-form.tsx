@@ -60,8 +60,6 @@ const OPERATOR_LABELS: Record<string, string> = {
 	EQ: "= (equal to)",
 };
 
-// ─── Loading / error shell ────────────────────────────────────────────────────
-
 export function EditWorkflowForm({ id }: { id: string }) {
 	const trpc = useTRPC();
 	const {
@@ -86,8 +84,6 @@ export function EditWorkflowForm({ id }: { id: string }) {
 	// always correct from the first render — avoids uncontrolled→controlled flip.
 	return <EditFormInner id={id} workflow={workflow} />;
 }
-
-// ─── Inner form (only mounts when workflow data is ready) ─────────────────────
 
 function EditFormInner({
 	id,

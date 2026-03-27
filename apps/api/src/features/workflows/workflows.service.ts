@@ -163,7 +163,6 @@ export class WorkflowsService {
 					});
 				}
 
-				// Trigger type and config type are immutable — reject mismatched config updates
 				if (data.thresholdConfig && workflow.triggerType !== "THRESHOLD") {
 					throw new TRPCError({
 						code: "BAD_REQUEST",

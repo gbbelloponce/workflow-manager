@@ -72,10 +72,6 @@ export function WorkflowViewDialog({
 	);
 }
 
-// ---------------------------------------------------------------------------
-// Detail sections
-// ---------------------------------------------------------------------------
-
 type WorkflowDetail = RouterOutputs["workflowsRouter"]["getById"];
 
 const OPERATOR_LABELS: Record<string, string> = {
