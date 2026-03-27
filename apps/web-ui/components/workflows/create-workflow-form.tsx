@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useFieldArray, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
@@ -66,6 +66,7 @@ const OPERATOR_LABELS: Record<string, string> = {
 export function CreateWorkflowForm() {
 	const router = useRouter();
 	const trpc = useTRPC();
+	const queryClient = useQueryClient();
 
 	const form = useForm<FormValues>({
 		resolver: zodResolver(createWorkflowSchema),
@@ -92,6 +93,7 @@ export function CreateWorkflowForm() {
 	const mutation = useMutation({
 		...trpc.workflowsRouter.create.mutationOptions(),
 		onSuccess: () => {
+			queryClient.invalidateQueries(trpc.workflowsRouter.getAll.queryFilter());
 			toast.success("Workflow created.");
 			router.push("/workflows");
 		},

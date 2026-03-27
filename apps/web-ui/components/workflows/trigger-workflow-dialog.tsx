@@ -45,6 +45,9 @@ export function TriggerWorkflowDialog({
 					trpc.workflowsRouter.getAll.queryFilter(),
 				);
 				queryClient.invalidateQueries(trpc.eventsRouter.getAll.queryFilter());
+				queryClient.invalidateQueries(
+					trpc.notificationsRouter.getAll.queryFilter(),
+				);
 				toast.success("Workflow triggered successfully");
 			} else {
 				toast.info("Condition not met — no event was created");
