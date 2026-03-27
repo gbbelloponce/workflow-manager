@@ -1,10 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
@@ -14,11 +17,13 @@ import type { RouterOutputs } from "@/lib/trpc/types";
 interface WorkflowViewDialogProps {
 	workflowId: string | null;
 	onClose: () => void;
+	onTrigger: (workflowId: string) => void;
 }
 
 export function WorkflowViewDialog({
 	workflowId,
 	onClose,
+	onTrigger,
 }: WorkflowViewDialogProps) {
 	const trpc = useTRPC();
 
@@ -42,6 +47,26 @@ export function WorkflowViewDialog({
 				)}
 
 				{workflow && <WorkflowDetails workflow={workflow} />}
+
+				<DialogFooter>
+					<Button
+						variant="secondary"
+						disabled={!workflow}
+						onClick={() => {
+							if (workflowId) {
+								onClose();
+								onTrigger(workflowId);
+							}
+						}}
+					>
+						Trigger manually
+					</Button>
+					<Button variant="outline" disabled={!workflow} asChild>
+						<Link href={`/workflows/${workflowId}`} onClick={onClose}>
+							Edit
+						</Link>
+					</Button>
+				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	);

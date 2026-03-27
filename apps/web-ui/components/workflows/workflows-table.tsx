@@ -159,6 +159,10 @@ export function WorkflowsTable() {
 			<WorkflowViewDialog
 				workflowId={viewWorkflowId}
 				onClose={() => setViewWorkflowId(null)}
+				onTrigger={(id) => {
+					setViewWorkflowId(null);
+					setTriggerWorkflowId(id);
+				}}
 			/>
 
 			<Dialog
