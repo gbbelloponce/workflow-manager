@@ -65,6 +65,12 @@ This starts both the API (port 8000) and the web UI (port 3000) in parallel.
 
 ---
 
+### Note for the interviewer
+
+The core business logic lives in `apps/api/src/features/trigger/trigger.service.ts`. That's where workflow activation is checked, duplicate open events are prevented, new events are created, and notifications are queued — all in one place. Everything else (routers, frontend) delegates to it.
+
+---
+
 ### Architecture decisions
 
 **Monorepo with Bun workspaces** — both apps live in the same repo so the tRPC type contract between API and frontend can be enforced at the workspace level without publishing packages.
