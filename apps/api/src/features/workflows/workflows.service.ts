@@ -4,6 +4,7 @@ import { Prisma } from "../../shared/db/generated/prisma/client";
 import { PrismaService } from "../../shared/db/prisma.service";
 import type {
 	CreateWorkflowInput,
+	GetAllWorkflowsInput,
 	UpdateWorkflowInput,
 } from "./workflows.schemas";
 
@@ -11,18 +12,25 @@ import type {
 export class WorkflowsService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	findAll() {
-		return this.prisma.workflow.findMany({
-			select: {
-				id: true,
-				name: true,
-				triggerType: true,
-				isActive: true,
-				createdAt: true,
-				_count: { select: { recipients: true } },
-			},
-			orderBy: { createdAt: "desc" },
-		});
+	async findAll(input: GetAllWorkflowsInput) {
+		const { page, pageSize } = input;
+		const [items, total] = await this.prisma.$transaction([
+			this.prisma.workflow.findMany({
+				select: {
+					id: true,
+					name: true,
+					triggerType: true,
+					isActive: true,
+					createdAt: true,
+					_count: { select: { recipients: true } },
+				},
+				orderBy: { createdAt: "desc" },
+				skip: (page - 1) * pageSize,
+				take: pageSize,
+			}),
+			this.prisma.workflow.count(),
+		]);
+		return { items, total, page, pageSize };
 	}
 
 	async findById(id: string) {

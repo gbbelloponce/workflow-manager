@@ -19,21 +19,26 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { TablePagination } from "@/components/ui/table-pagination";
 import { useTRPC } from "@/lib/trpc/react";
 import type { RouterOutputs } from "@/lib/trpc/types";
 import { NotificationViewDialog } from "./notification-view-dialog";
 
-type Notification = RouterOutputs["notificationsRouter"]["getAll"][number];
+type Notification =
+	RouterOutputs["notificationsRouter"]["getAll"]["items"][number];
 
 export function NotificationsTable() {
 	const trpc = useTRPC();
 	const [viewNotification, setViewNotification] = useState<Notification | null>(
 		null,
 	);
+	const [page, setPage] = useState(1);
 
-	const { data: notifications, isLoading } = useQuery(
-		trpc.notificationsRouter.getAll.queryOptions(),
+	const { data, isLoading } = useQuery(
+		trpc.notificationsRouter.getAll.queryOptions({ page, pageSize: 20 }),
 	);
+	const notifications = data?.items ?? [];
+	const totalPages = data ? Math.ceil(data.total / data.pageSize) : 1;
 
 	if (isLoading) {
 		return (
@@ -41,7 +46,7 @@ export function NotificationsTable() {
 		);
 	}
 
-	if (!notifications?.length) {
+	if (!notifications.length) {
 		return (
 			<p className="text-muted-foreground text-sm">
 				No notifications yet. Trigger a workflow to get started.
@@ -107,6 +112,13 @@ export function NotificationsTable() {
 					))}
 				</TableBody>
 			</Table>
+
+			<TablePagination
+				page={page}
+				totalPages={totalPages}
+				onPrev={() => setPage((p) => p - 1)}
+				onNext={() => setPage((p) => p + 1)}
+			/>
 
 			<NotificationViewDialog
 				notification={viewNotification}

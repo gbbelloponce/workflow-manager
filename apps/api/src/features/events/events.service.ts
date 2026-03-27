@@ -1,20 +1,26 @@
 import { Injectable } from "@nestjs/common";
 import { TRPCError } from "@trpc/server";
 import { PrismaService } from "../../shared/db/prisma.service";
+import type { GetAllEventsInput } from "./events.schemas";
 
 @Injectable()
 export class EventsService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	findAll() {
-		return this.prisma.event.findMany({
-			include: {
-				workflow: {
-					select: { id: true, name: true, triggerType: true },
+	async findAll(input: GetAllEventsInput) {
+		const { page, pageSize } = input;
+		const [items, total] = await this.prisma.$transaction([
+			this.prisma.event.findMany({
+				include: {
+					workflow: { select: { id: true, name: true, triggerType: true } },
 				},
-			},
-			orderBy: { createdAt: "desc" },
-		});
+				orderBy: { createdAt: "desc" },
+				skip: (page - 1) * pageSize,
+				take: pageSize,
+			}),
+			this.prisma.event.count(),
+		]);
+		return { items, total, page, pageSize };
 	}
 
 	async resolve(id: string, resolvedComment?: string) {

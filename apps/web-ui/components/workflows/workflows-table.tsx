@@ -31,6 +31,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { TablePagination } from "@/components/ui/table-pagination";
 import { getTRPCErrorMessage } from "@/lib/trpc/error";
 import { useTRPC } from "@/lib/trpc/react";
 import { TriggerWorkflowDialog } from "./trigger-workflow-dialog";
@@ -44,10 +45,13 @@ export function WorkflowsTable() {
 		null,
 	);
 	const [viewWorkflowId, setViewWorkflowId] = useState<string | null>(null);
+	const [page, setPage] = useState(1);
 
-	const { data: workflows, isLoading } = useQuery(
-		trpc.workflowsRouter.getAll.queryOptions(),
+	const { data, isLoading } = useQuery(
+		trpc.workflowsRouter.getAll.queryOptions({ page, pageSize: 20 }),
 	);
+	const workflows = data?.items ?? [];
+	const totalPages = data ? Math.ceil(data.total / data.pageSize) : 1;
 
 	const updateMutation = useMutation({
 		...trpc.workflowsRouter.update.mutationOptions(),
@@ -150,6 +154,13 @@ export function WorkflowsTable() {
 					))}
 				</TableBody>
 			</Table>
+
+			<TablePagination
+				page={page}
+				totalPages={totalPages}
+				onPrev={() => setPage((p) => p - 1)}
+				onNext={() => setPage((p) => p + 1)}
+			/>
 
 			<TriggerWorkflowDialog
 				workflowId={triggerWorkflowId}

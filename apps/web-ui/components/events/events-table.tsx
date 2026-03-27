@@ -20,27 +20,31 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
+import { TablePagination } from "@/components/ui/table-pagination";
 import { useTRPC } from "@/lib/trpc/react";
 import type { RouterOutputs } from "@/lib/trpc/types";
 import { EventViewDialog } from "./event-view-dialog";
 import { ResolveEventDialog } from "./resolve-event-dialog";
 
-type Event = RouterOutputs["eventsRouter"]["getAll"][number];
+type Event = RouterOutputs["eventsRouter"]["getAll"]["items"][number];
 
 export function EventsTable() {
 	const trpc = useTRPC();
 	const [viewEvent, setViewEvent] = useState<Event | null>(null);
 	const [resolveEventId, setResolveEventId] = useState<string | null>(null);
+	const [page, setPage] = useState(1);
 
-	const { data: events, isLoading } = useQuery(
-		trpc.eventsRouter.getAll.queryOptions(),
+	const { data, isLoading } = useQuery(
+		trpc.eventsRouter.getAll.queryOptions({ page, pageSize: 20 }),
 	);
+	const events = data?.items ?? [];
+	const totalPages = data ? Math.ceil(data.total / data.pageSize) : 1;
 
 	if (isLoading) {
 		return <p className="text-muted-foreground text-sm">Loading events…</p>;
 	}
 
-	if (!events?.length) {
+	if (!events.length) {
 		return (
 			<p className="text-muted-foreground text-sm">
 				No events yet. Trigger a workflow to get started.
@@ -103,6 +107,13 @@ export function EventsTable() {
 					))}
 				</TableBody>
 			</Table>
+
+			<TablePagination
+				page={page}
+				totalPages={totalPages}
+				onPrev={() => setPage((p) => p - 1)}
+				onNext={() => setPage((p) => p + 1)}
+			/>
 
 			<EventViewDialog
 				event={viewEvent}

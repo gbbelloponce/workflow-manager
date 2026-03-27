@@ -1,7 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { Input, Mutation, Query, Router } from "nestjs-trpc";
-import { z } from "zod";
-import { eventSchema, resolveEventSchema } from "./events.schemas";
+import { paginationInputSchema } from "../../shared/trpc/pagination.schemas";
+import type { GetAllEventsInput } from "./events.schemas";
+import {
+	eventSchema,
+	paginatedEventsSchema,
+	resolveEventSchema,
+} from "./events.schemas";
 import { EventsService } from "./events.service";
 
 @Injectable()
@@ -9,9 +14,9 @@ import { EventsService } from "./events.service";
 export class EventsRouter {
 	constructor(private readonly eventsService: EventsService) {}
 
-	@Query({ output: z.array(eventSchema) })
-	getAll() {
-		return this.eventsService.findAll();
+	@Query({ input: paginationInputSchema, output: paginatedEventsSchema })
+	getAll(@Input() input: GetAllEventsInput) {
+		return this.eventsService.findAll(input);
 	}
 
 	@Mutation({

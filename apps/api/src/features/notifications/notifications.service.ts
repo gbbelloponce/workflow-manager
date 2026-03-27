@@ -1,6 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import type { NotificationChannel } from "../../shared/db/generated/prisma/client";
 import { PrismaService } from "../../shared/db/prisma.service";
+import type { GetAllNotificationsInput } from "./notifications.schemas";
 
 interface WorkflowForNotification {
 	message: string;
@@ -13,17 +14,24 @@ interface WorkflowForNotification {
 export class NotificationsService {
 	constructor(private readonly prisma: PrismaService) {}
 
-	async findAll() {
-		return this.prisma.notification.findMany({
-			orderBy: { createdAt: "desc" },
-			include: {
-				event: {
-					include: {
-						workflow: { select: { id: true, name: true } },
+	async findAll(input: GetAllNotificationsInput) {
+		const { page, pageSize } = input;
+		const [items, total] = await this.prisma.$transaction([
+			this.prisma.notification.findMany({
+				include: {
+					event: {
+						include: {
+							workflow: { select: { id: true, name: true } },
+						},
 					},
 				},
-			},
-		});
+				orderBy: { createdAt: "desc" },
+				skip: (page - 1) * pageSize,
+				take: pageSize,
+			}),
+			this.prisma.notification.count(),
+		]);
+		return { items, total, page, pageSize };
 	}
 
 	async notifyForEvent(

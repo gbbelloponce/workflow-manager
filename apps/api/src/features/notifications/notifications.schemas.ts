@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+	paginatedSchema,
+	paginationInputSchema,
+} from "../../shared/trpc/pagination.schemas";
 
 export const notificationSchema = z.object({
 	id: z.string(),
@@ -16,3 +20,7 @@ export const notificationSchema = z.object({
 		}),
 	}),
 });
+
+export const paginatedNotificationsSchema = paginatedSchema(notificationSchema);
+
+export type GetAllNotificationsInput = z.infer<typeof paginationInputSchema>;

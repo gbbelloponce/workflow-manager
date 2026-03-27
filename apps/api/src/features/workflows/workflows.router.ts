@@ -1,11 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { Input, Mutation, Query, Router } from "nestjs-trpc";
 import { z } from "zod";
+import { paginationInputSchema } from "../../shared/trpc/pagination.schemas";
+import type { GetAllWorkflowsInput } from "./workflows.schemas";
 import {
 	createWorkflowSchema,
+	paginatedWorkflowsSchema,
 	updateWorkflowSchema,
 	workflowDetailSchema,
-	workflowSummarySchema,
 } from "./workflows.schemas";
 import { WorkflowsService } from "./workflows.service";
 
@@ -14,9 +16,9 @@ import { WorkflowsService } from "./workflows.service";
 export class WorkflowsRouter {
 	constructor(private readonly workflowsService: WorkflowsService) {}
 
-	@Query({ output: z.array(workflowSummarySchema) })
-	getAll() {
-		return this.workflowsService.findAll();
+	@Query({ input: paginationInputSchema, output: paginatedWorkflowsSchema })
+	getAll(@Input() input: GetAllWorkflowsInput) {
+		return this.workflowsService.findAll(input);
 	}
 
 	@Query({

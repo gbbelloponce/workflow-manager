@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+	paginatedSchema,
+	paginationInputSchema,
+} from "../../shared/trpc/pagination.schemas";
 
 export const recipientSchema = z.object({
 	id: z.string(),
@@ -91,5 +95,8 @@ export const updateWorkflowSchema = z.object({
 		.optional(),
 });
 
+export const paginatedWorkflowsSchema = paginatedSchema(workflowSummarySchema);
+
 export type CreateWorkflowInput = z.infer<typeof createWorkflowSchema>;
 export type UpdateWorkflowInput = z.infer<typeof updateWorkflowSchema>;
+export type GetAllWorkflowsInput = z.infer<typeof paginationInputSchema>;

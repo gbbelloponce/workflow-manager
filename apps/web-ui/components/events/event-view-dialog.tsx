@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import type { RouterOutputs } from "@/lib/trpc/types";
 
-type Event = RouterOutputs["eventsRouter"]["getAll"][number];
+type Event = RouterOutputs["eventsRouter"]["getAll"]["items"][number];
 
 interface EventViewDialogProps {
 	event: Event | null;

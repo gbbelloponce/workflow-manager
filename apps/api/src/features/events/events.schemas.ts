@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+	paginatedSchema,
+	paginationInputSchema,
+} from "../../shared/trpc/pagination.schemas";
 
 export const resolveEventSchema = z.object({
 	id: z.string().min(1),
@@ -19,3 +23,7 @@ export const eventSchema = z.object({
 		triggerType: z.enum(["THRESHOLD", "VARIANCE"]),
 	}),
 });
+
+export const paginatedEventsSchema = paginatedSchema(eventSchema);
+
+export type GetAllEventsInput = z.infer<typeof paginationInputSchema>;

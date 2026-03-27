@@ -11,7 +11,8 @@ import {
 } from "@/components/ui/dialog";
 import type { RouterOutputs } from "@/lib/trpc/types";
 
-type Notification = RouterOutputs["notificationsRouter"]["getAll"][number];
+type Notification =
+	RouterOutputs["notificationsRouter"]["getAll"]["items"][number];
 
 interface NotificationViewDialogProps {
 	notification: Notification | null;
