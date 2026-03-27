@@ -39,7 +39,7 @@ export function NotificationsTable() {
 	const { data, isLoading } = useQuery(
 		trpc.notificationsRouter.getAll.queryOptions({
 			page,
-			pageSize: 20,
+			pageSize: 10,
 			workflowId,
 		}),
 	);

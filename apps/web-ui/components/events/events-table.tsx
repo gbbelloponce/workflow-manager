@@ -49,7 +49,7 @@ export function EventsTable() {
 	const { data, isLoading } = useQuery(
 		trpc.eventsRouter.getAll.queryOptions({
 			page,
-			pageSize: 20,
+			pageSize: 10,
 			workflowId,
 			status: statusFilter === "all" ? undefined : statusFilter,
 		}),

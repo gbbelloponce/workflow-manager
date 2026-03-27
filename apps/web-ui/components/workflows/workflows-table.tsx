@@ -64,7 +64,7 @@ export function WorkflowsTable() {
 	const { data, isLoading } = useQuery(
 		trpc.workflowsRouter.getAll.queryOptions({
 			page,
-			pageSize: 20,
+			pageSize: 10,
 			name: debouncedName || undefined,
 			isActive:
 				isActiveFilter === "all" ? undefined : isActiveFilter === "true",
