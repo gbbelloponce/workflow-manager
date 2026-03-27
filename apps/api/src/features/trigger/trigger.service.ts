@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { TRPCError } from "@trpc/server";
 import type { Operator } from "../../shared/db/generated/prisma/client";
 import { PrismaService } from "../../shared/db/prisma.service";
+import { NotificationsService } from "../notifications/notifications.service";
 import { WorkflowsService } from "../workflows/workflows.service";
 
 export type EvaluateResult =
@@ -23,6 +24,7 @@ export class TriggerService {
 	constructor(
 		private readonly prisma: PrismaService,
 		private readonly workflowsService: WorkflowsService,
+		private readonly notificationsService: NotificationsService,
 	) {}
 
 	async evaluate(
@@ -55,7 +57,11 @@ export class TriggerService {
 
 		const eventId = await this.createEvent(workflowId, actualValue);
 
-		// TODO: notify recipients
+		await this.notificationsService.notifyForEvent(
+			eventId,
+			workflow,
+			actualValue,
+		);
 
 		return { triggered: true, eventId };
 	}
