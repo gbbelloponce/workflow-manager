@@ -23,12 +23,14 @@ import {
 import { useTRPC } from "@/lib/trpc/react";
 import type { RouterOutputs } from "@/lib/trpc/types";
 import { EventViewDialog } from "./event-view-dialog";
+import { ResolveEventDialog } from "./resolve-event-dialog";
 
 type Event = RouterOutputs["eventsRouter"]["getAll"][number];
 
 export function EventsTable() {
 	const trpc = useTRPC();
 	const [viewEvent, setViewEvent] = useState<Event | null>(null);
+	const [resolveEventId, setResolveEventId] = useState<string | null>(null);
 
 	const { data: events, isLoading } = useQuery(
 		trpc.eventsRouter.getAll.queryOptions(),
@@ -88,7 +90,10 @@ export function EventsTable() {
 											View
 										</DropdownMenuItem>
 										<DropdownMenuSeparator />
-										<DropdownMenuItem disabled={event.status === "RESOLVED"}>
+										<DropdownMenuItem
+											disabled={event.status === "RESOLVED"}
+											onSelect={() => setResolveEventId(event.id)}
+										>
 											Resolve
 										</DropdownMenuItem>
 									</DropdownMenuContent>
@@ -99,7 +104,19 @@ export function EventsTable() {
 				</TableBody>
 			</Table>
 
-			<EventViewDialog event={viewEvent} onClose={() => setViewEvent(null)} />
+			<EventViewDialog
+				event={viewEvent}
+				onClose={() => setViewEvent(null)}
+				onResolve={(id) => {
+					setViewEvent(null);
+					setResolveEventId(id);
+				}}
+			/>
+
+			<ResolveEventDialog
+				eventId={resolveEventId}
+				onClose={() => setResolveEventId(null)}
+			/>
 		</>
 	);
 }

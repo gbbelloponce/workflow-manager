@@ -1,9 +1,11 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
 	Dialog,
 	DialogContent,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
@@ -14,9 +16,14 @@ type Event = RouterOutputs["eventsRouter"]["getAll"][number];
 interface EventViewDialogProps {
 	event: Event | null;
 	onClose: () => void;
+	onResolve: (eventId: string) => void;
 }
 
-export function EventViewDialog({ event, onClose }: EventViewDialogProps) {
+export function EventViewDialog({
+	event,
+	onClose,
+	onResolve,
+}: EventViewDialogProps) {
 	return (
 		<Dialog open={event !== null} onOpenChange={(open) => !open && onClose()}>
 			<DialogContent className="max-w-lg">
@@ -25,6 +32,20 @@ export function EventViewDialog({ event, onClose }: EventViewDialogProps) {
 				</DialogHeader>
 
 				{event && <EventDetails event={event} />}
+
+				<DialogFooter>
+					<Button
+						disabled={event?.status === "RESOLVED"}
+						onClick={() => {
+							if (event) {
+								onClose();
+								onResolve(event.id);
+							}
+						}}
+					>
+						Resolve
+					</Button>
+				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	);
