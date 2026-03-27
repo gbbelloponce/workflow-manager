@@ -1,0 +1,14 @@
+model Notification {
+  id          String              @id @default(cuid())
+  channel     NotificationChannel
+  target      String
+  message     String
+  status      NotificationStatus  @default(QUEUED)
+  createdAt   DateTime            @default(now())
+  deliveredAt DateTime?
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@map("notification")
+}

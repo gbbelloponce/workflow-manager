@@ -20,3 +20,8 @@ enum EventStatus {
   OPEN
   RESOLVED
 }
+
+enum NotificationStatus {
+  QUEUED
+  DELIVERED
+}
